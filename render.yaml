@@ -1,0 +1,24 @@
+services:
+  # ── Backend (FastAPI) ──────────────────────────────────────────────────────
+  - type: web
+    name: iso-ts-22220-2011
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: ALLOWED_ORIGINS
+        value: https://iso-ts-22220-2011-frontend.onrender.com,http://localhost:5173
+      - key: DATABASE_URL
+        value: sqlite:///./patients.db   # swap for a Render Postgres URL in production
+
+  # ── Frontend (React static site) ──────────────────────────────────────────
+  - type: web
+    name: iso-ts-22220-2011-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://iso-ts-22220-2011.onrender.com
